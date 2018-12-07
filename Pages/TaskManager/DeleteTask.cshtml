@@ -1,0 +1,31 @@
+﻿@page
+@model ControlEnvRazor.Pages.DeleteTaskModel
+@{
+    ViewData["Title"] = "Удаление задания";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>DeleteTask</h2>
+
+<p class="text-danger">@Model.errorMessage</p>
+
+<h3>Вы действительно хотите удалить?</h3>
+<div>
+    <h4>Задание</h4>
+    <hr />
+
+    <dl class="dl-horizontal">
+        <dt>
+            @Model.userTask.TaskName
+        </dt>
+        <dd>
+            @Model.userTask.CommonDescription
+        </dd>
+    </dl>
+
+    <form method="post">
+        <input type="hidden" asp-for="userTask.Id" />
+        <input type="submit" value="Удалить" class="btn btn-default" /> |
+        <a asp-page="./ShowTasks">Back to List</a>
+    </form>
+</div>

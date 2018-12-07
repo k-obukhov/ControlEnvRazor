@@ -1,0 +1,35 @@
+﻿@page
+@model ControlEnvRazor.Pages.TaskManager.EditVariantModel
+@{
+    ViewData["Title"] = "Редактирование варианта";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>EditVariant</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="TaskVariant.Id" />
+            <div class="form-group">
+                <label asp-for="TaskVariant.NumberOfVariant" class="control-label"></label>
+                <input asp-for="TaskVariant.NumberOfVariant" class="form-control" />
+                <span asp-validation-for="TaskVariant.NumberOfVariant" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TaskVariant.Description" class="control-label"></label>
+                <input asp-for="TaskVariant.Description" class="form-control" />
+                <span asp-validation-for="TaskVariant.Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="./ShowVariants"asp-route-id="@Model.TaskVariant.UserTask.Id">Вернуться</a>
+</div>

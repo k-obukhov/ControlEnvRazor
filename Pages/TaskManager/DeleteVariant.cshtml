@@ -1,0 +1,28 @@
+﻿@page
+@model ControlEnvRazor.Pages.TaskManager.DeleteVariantModel
+@{
+    ViewData["Title"] = "Удаление варианта";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>DeleteVariant</h2>
+
+<h3>Вы действительно хотите удалить?</h3>
+<div>
+    <h4>Вариант</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Model.TaskVariant.NumberOfVariant
+        </dt>
+        <dd>
+            @Model.TaskVariant.Description
+        </dd>
+    </dl>
+
+    <form method="post">
+        <input type="hidden" asp-for="TaskVariant.Id" />
+        <input type="submit" value="Удалить" class="btn btn-default" /> |
+        <a asp-page="./ShowVariants"asp-route-id="@Model.TaskVariant.UserTask.Id">Вернуться</a>
+    </form>
+</div>

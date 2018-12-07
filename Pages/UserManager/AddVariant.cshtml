@@ -1,0 +1,65 @@
+﻿@page 
+@model ControlEnvRazor.Pages.UserManager.AddVariantModel
+@{
+    ViewData["Title"] = "Назначение варианта пользователю";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>Назначение варианта</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label> Выбор задания </label>
+        <select class="form-control" id="selectTask">
+            @foreach (var userTask in Model.UserTasks)
+            {
+                <option value="@userTask.Id" title="@userTask.CommonDescription"> @userTask.TaskName </option>
+            }
+        </select>
+        <label>  Выбор варианта </label>
+        <select class="form-control" id="selectVariant" name="selectedVariant">
+            @foreach (var taskVar in Model.TaskVariants)
+            {
+                <option value="@taskVar.Id" title="@taskVar.Description"> @taskVar.NumberOfVariant </option>
+            }
+        </select>
+    </div>
+    <input type="submit" value="Назначить" />
+</form>
+
+@section scripts
+{
+    <script type="text/javascript">
+        $(function () {
+            $('#selectTask').change(function () {
+                var id = $(this).val();
+                $.ajax({
+                    type: 'GET',
+                    contentType: "application/json",
+                    dataType: "json",
+                    url: 'AddVariant?handler=TaskVariants',
+                    data:
+                    {
+                        id : id
+                    },
+                    success: function (res) {
+
+                        $('#selectVariant').empty();
+                        var pos = $('#selectVariant');
+                        
+                        pos.empty();
+
+                        $.each(res, function (i, item) {
+                            $('#selectVariant').append($('<option></option>').attr('value', item.id).attr('title', item.description).text(item.number))
+                        });
+                        
+                    },
+                    failure: function (response) {
+                        alert(response);
+                    }
+                });
+            });
+        })
+    </script>
+}
+

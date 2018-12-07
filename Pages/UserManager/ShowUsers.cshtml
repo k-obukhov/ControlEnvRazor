@@ -1,0 +1,44 @@
+﻿@page
+@model ControlEnvRazor.Pages.UserManager.ShowUsersModel
+@{
+    ViewData["Title"] = "Список пользователей";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>Все пользователи системы</h2>
+
+@if (Model.applicationUsers?.Count != 0)
+{
+    <table class="table">
+        <tr><td>E-mail</td><td>Роли</td><td>Варианты</td></tr>
+        @foreach (var user in Model.applicationUsers)
+        {
+            <tr>
+            <td> @user.Email </td>
+            <td> <a asp-page="ChangeUserRoles" asp-route-UserId="@user.Id"> Редактирование ролей </a> </td> 
+            <td>
+                <a asp-page="AddVariant" asp-route-UserId="@user.Id"> Назначить вариант </a> <br />
+                @foreach (var variant in user.UserVariants)
+                {
+                <p>Вариант № @variant.TaskVariant?.NumberOfVariant задания @variant.TaskVariant?.UserTask?.TaskName 
+                <a asp-page="EditUserVariant" asp-route-id="@variant.Id"> Подробнее... </a> <br /> 
+                    @if (!string.IsNullOrEmpty(variant.GithubRepo))
+                    {
+                        <a href="@variant.GithubRepo"> Ссылка на репозиторий </a>
+                    }
+                    else
+                    {
+                        <b> Решения пока нет !</b>
+                    }
+              </p>
+                }
+            </td>
+            </tr>
+        }
+    </table>
+    
+}
+else
+{
+    <b> Нет пользователей! (вот это поворот, кто же это читает-то мдаааа ну ты конечно да-да) </b>
+}

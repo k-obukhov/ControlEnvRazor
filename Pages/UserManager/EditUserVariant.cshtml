@@ -1,0 +1,22 @@
+﻿@page
+@model ControlEnvRazor.Pages.UserManager.EditUserVariantModel
+@{
+    ViewData["Title"] = "Редактирование решения пользователя";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>Управление решением студента</h2>
+
+<div>
+    <span>
+        <p> Вариант @Model.Variant.TaskVariant.NumberOfVariant текст — "@Model.Variant.TaskVariant.Description" задание — "@Model.Variant.TaskVariant.UserTask.TaskName" </p>
+        <p> Назначен @Model.Variant.ApplicationUser.UserName </p>
+        <p> Ссылка на github = @if (string.IsNullOrEmpty(Model.Variant.GithubRepo)) { <b>Отсутствует</b> } else { <a href="@Model.Variant.GithubRepo"> Перейти </a> } </p>
+    </span>
+
+    <form method="post">
+        <input type="submit" value="Удалить" class="btn btn-danger" />
+        <a asp-page="./ShowUsers">Вернуться</a>
+    </form>
+
+</div>

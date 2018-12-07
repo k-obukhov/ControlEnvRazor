@@ -1,0 +1,20 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Стартовая страница";
+}
+
+<h3> Управляющая среда </h3>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <p> Текущий пользователь — @User.Identity.Name</p>
+
+    <form method="post" asp-page="Account/Logout">
+        <input type="submit" value="Выход" />
+    </form>
+}
+else
+{
+    <a asp-page="Account/Login">Вход</a>
+}

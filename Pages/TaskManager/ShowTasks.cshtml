@@ -1,0 +1,24 @@
+﻿@page
+@model ControlEnvRazor.Pages.TaskManager.ShowTasksModel
+@{
+    ViewData["Title"] = "Показ заданий";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+
+<a asp-page="CreateTask">Добавить задание</a> <br />
+
+@if (Model.userTasks.Count != 0)
+{
+    <table class="table">
+        <tr><td>ID</td><td>Название</td><td>Описание</td><td>Число вариантов</td><td>Действия</td></tr>
+        @foreach (var item in Model.userTasks)
+        {
+            <tr><td>@item.Id</td><td>@item.TaskName</td><td>@item.CommonDescription</td><td>@item.UserTaskVariants?.Count</td><td> <a asp-page="DeleteTask" asp-route-id="@item.Id">Удалить</a> | <a asp-page="ShowVariants" asp-route-id="@item.Id">Перейти к вариантам</a> | <a asp-page="EditTask" asp-route-id="@item.Id">Редактировать</a></td></tr>
+        }
+    </table>
+}
+else
+{
+    <b> Пока что вы не создали ни одного задания. <a asp-page="CreateTask">Добавьте</a> новое </b>
+}

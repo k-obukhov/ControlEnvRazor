@@ -1,0 +1,25 @@
+﻿@page
+@model ControlEnvRazor.Pages.TaskManager.CreateVariantModel
+@{
+    ViewData["Title"] = "CreateVariant";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>Создание варианта</h2>
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="TaskVariant.NumberOfVariant" class="control-label"></label>
+        <input asp-for="TaskVariant.NumberOfVariant" class="form-control" />
+        <span asp-validation-for="TaskVariant.NumberOfVariant" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="TaskVariant.Description" class="control-label"></label>
+        <input asp-for="TaskVariant.Description" class="form-control" />
+        <span asp-validation-for="TaskVariant.Description" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="CreateVariant" class="btn btn-default" />
+    </div>
+</form>

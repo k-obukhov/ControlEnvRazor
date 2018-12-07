@@ -1,0 +1,22 @@
+﻿@page
+@model ControlEnvRazor.Pages.UserManager.ChangeUserRolesModel
+@{
+    ViewData["Title"] = "Управление ролями пользователя";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<h2>Изменение ролей</h2>
+
+<form asp-page="ChangeUserRoles" method="post">
+    <input type="hidden" name="UserId" value="@Model.UserId" />
+    <div class="form-group">
+        @foreach (var role in Model.AllRoles)
+        {
+            <input type="checkbox" name="roles" value="@role.Name"
+                   @(Model.UserRoles.Contains(role.Name) ? "checked=\"checked\"" : "") />
+            @role.Name <br />
+        }
+    </div>
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>
+
