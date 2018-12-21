@@ -5,12 +5,11 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-
-<a asp-page="CreateTask">Добавить задание</a> <br />
+<h2>Все задания</h2>
 
 @if (Model.userTasks.Count != 0)
 {
-    <table class="table">
+    <table class="table table-hover">
         <tr><td>ID</td><td>Название</td><td>Описание</td><td>Число вариантов</td><td>Действия</td></tr>
         @foreach (var item in Model.userTasks)
         {
@@ -20,5 +19,8 @@
 }
 else
 {
-    <b> Пока что вы не создали ни одного задания. <a asp-page="CreateTask">Добавьте</a> новое </b>
+    <b> Пока что вы не создали ни одного задания. <a asp-page="CreateTask">Добавьте</a> новое </b> <br />
 }
+
+
+<a asp-page="CreateTask" class="btn btn-default">Добавить задание</a> <br />

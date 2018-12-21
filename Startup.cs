@@ -1,8 +1,12 @@
+using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Text;
 using ControlEnvRazor.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json.Linq;
 
 namespace ControlEnvRazor
@@ -34,13 +39,25 @@ namespace ControlEnvRazor
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseLazyLoadingProxies().UseNpgsql(Configuration["config"]));
 
-            services.AddAuthentication()
-            .AddCookie()
+            services.AddAuthentication(/*options =>
+            {
+                //options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                //options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+
+                //options.DefaultScheme = "Cookies";
+                //options.DefaultChallengeScheme = "GitHub";
+            }*/)
+            .AddCookie("Cookies")
             .AddGitHub(options =>
             {
+                //options.SignInScheme = "Cookies";
                 options.ClientId = Configuration["Auth:Github:ClientID"];
                 options.ClientSecret = Configuration["Auth:GitHub:SecretID"];
                 options.CallbackPath = new PathString("/github-signin");
+
+                options.AuthorizationEndpoint = "https://github.com/login/oauth/authorize";
+                options.TokenEndpoint = "https://github.com/login/oauth/access_token";
+                options.UserInformationEndpoint = "https://api.github.com/user";
 
                 options.ClaimActions.MapJsonKey(ClaimTypes.NameIdentifier, "id");
                 options.ClaimActions.MapJsonKey(ClaimTypes.Name, "login");
@@ -48,10 +65,6 @@ namespace ControlEnvRazor
                 options.ClaimActions.MapJsonKey(ClaimTypes.Email, "email", ClaimValueTypes.Email);
                 options.ClaimActions.MapJsonKey("urn:github:url", "url");
 
-                options.ClaimActions.MapJsonKey("urn:github:login", "login");
-                options.ClaimActions.MapJsonKey("urn:github:avatar", "avatar_url");
-                
-                options.SaveTokens = true;
 
                 options.Events = new OAuthEvents
                 {
@@ -69,7 +82,39 @@ namespace ControlEnvRazor
                         context.RunClaimActions(user);
                     }
                 };
+
+
+                options.SaveTokens = true;
             });
+
+            // FOR API START
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                     // укзывает, будет ли валидироваться издатель при валидации токена
+                     ValidateIssuer = true,
+                     // строка, представляющая издателя
+                     ValidIssuer = AuthOptions.ISSUER,
+
+                     // будет ли валидироваться потребитель токена
+                     ValidateAudience = true,
+                     // установка потребителя токена
+                     ValidAudience = AuthOptions.AUDIENCE,
+                     // будет ли валидироваться время существования
+                     ValidateLifetime = true,
+
+                     // установка ключа безопасности
+                     IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                     // валидация ключа безопасности
+                     ValidateIssuerSigningKey = true,
+                 };
+            });
+
+            // FOR API END
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

@@ -5,20 +5,22 @@
     Layout = "~/Pages/Shared/_Layout.cshtml";
 }
 
-<a asp-page="CreateVariant" asp-route-id="@Model.currentID">Добавить вариант</a>
 
 <h2>Варианты</h2>
 @if (Model.TaskVariants.Count != 0)
 {
-    <table class="table">
+    <table class="table table-hover">
         <tr><td>ID</td><td>Номер</td><td>Описание</td><td>Число пользователей</td><td>Действия</td></tr>
         @foreach (var item in Model.TaskVariants)
         {
-            <tr><td>@item.Id</td><td>@item.NumberOfVariant</td><td>@item.Description</td><td>@item.UserVariants?.Count</td><td> <a asp-page="DeleteVariant" asp-route-id="@item.Id" asp-route-taskID="@Model.currentID">Удалить</a> | <a asp-page="EditVariant"  asp-route-id="@item.Id" asp-route-taskID="@Model.currentID">Редактировать</a></td></tr>
+            <tr><td>@item.Id</td><td>@item.NumberOfVariant</td><td>@item.Description</td><td>@item.UserVariants?.Count</td><td> <a asp-page="DeleteVariant" asp-route-id="@item.Id" asp-route-taskID="@Model.currentID">Удалить</a> | <a asp-page="EditVariant" asp-route-id="@item.Id" asp-route-taskID="@Model.currentID">Редактировать</a></td></tr>
         }
     </table>
 }
 else
 {
-    <b> Пока что вы не создали ни одного варианта. <a asp-page="CreateVariant" asp-route-id="@Model.currentID">Добавьте</a> новый </b>
+    <b> Пока что вы не создали ни одного варианта. <a asp-page="CreateVariant" asp-route-id="@Model.currentID">Добавьте</a> новый </b> <br />
 }
+
+
+<a asp-page="CreateVariant" asp-route-id="@Model.currentID" class="btn btn-default">Добавить вариант</a> 

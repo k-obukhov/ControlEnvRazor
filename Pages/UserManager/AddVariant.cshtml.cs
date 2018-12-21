@@ -65,7 +65,7 @@ namespace ControlEnvRazor.Pages.UserManager
         public async Task<IActionResult> OnPostAsync(string UserId, int selectedVariant)
         {
             var curUser = await manager.GetUserAsync(User);
-            var taskVar = await context.TaskVariants.FirstAsync(el => el.UserTask.ApplicationUserId == curUser.Id && el.Id == selectedVariant);
+            var taskVar = await context.TaskVariants.FirstOrDefaultAsync(el => el.UserTask.ApplicationUserId == curUser.Id && el.Id == selectedVariant);
             var selectedUser = await manager.FindByIdAsync(UserId);
 
             if (taskVar == null || selectedUser == null)

@@ -11,10 +11,10 @@
     <p> Текущий пользователь — @User.Identity.Name</p>
 
     <form method="post" asp-page="Account/Logout">
-        <input type="submit" value="Выход" />
+        <input type="submit" class="btn btn-primary" value="Выход" />
     </form>
 }
 else
 {
-    <a asp-page="Account/Login">Вход</a>
+    <a asp-page="Account/Login" class="btn btn-default">Вход</a>
 }
