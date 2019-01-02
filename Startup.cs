@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OAuth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -96,15 +97,8 @@ namespace ControlEnvRazor
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                      // укзывает, будет ли валидироваться издатель при валидации токена
-                     ValidateIssuer = true,
-                     // строка, представляющая издателя
-                     ValidIssuer = AuthOptions.ISSUER,
-
-                     // будет ли валидироваться потребитель токена
-                     ValidateAudience = true,
-                     // установка потребителя токена
-                     ValidAudience = AuthOptions.AUDIENCE,
-                     // будет ли валидироваться время существования
+                     ValidateIssuer = false,
+                     ValidateAudience = false,
                      ValidateLifetime = true,
 
                      // установка ключа безопасности
@@ -113,6 +107,13 @@ namespace ControlEnvRazor
                      ValidateIssuerSigningKey = true,
                  };
             });
+            
+            services.AddAuthorization(options =>
+            {
+                options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                .RequireAuthenticatedUser()
+                .Build();
+            }); 
 
             // FOR API END
 
@@ -139,6 +140,7 @@ namespace ControlEnvRazor
             app.UseCookiePolicy();
 
             app.UseMvc();
+            
             /* 
             app.UseMvc(routes =>
             {

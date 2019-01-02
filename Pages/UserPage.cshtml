@@ -1,0 +1,143 @@
+﻿@page
+@{
+    ViewData["Title"] = "UserPage";
+    Layout = "~/Pages/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"
+            integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+            crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <form class="form-group" name="login">
+
+        <input type="text" placeholder="Github Login" required name="username" value="NothingIsGood">
+        <input type="password" placeholder="Github Password" required name="password" value="igrh1998kost30region">
+    </form>
+    <input type="button" value="Войти" id="submit_button">
+
+    <br>
+
+    <div id="user_info">
+
+    </div>
+
+    <div>
+        <b> Выбор варианта </b>
+        <select id = "sendLink">
+            
+        </select>
+
+        <br /> <br />
+        <input type="text" placeholder="Ссылка для отправки" id="textLink" /> <br /> <br/>
+        <input type="submit" value="Отправить ссылку на github" id="submitLink" />
+        <br />
+
+        <div id="tasks">
+
+        </div>
+    </div>
+
+    <div id="info">
+
+    </div>
+
+
+    <script>
+        let base_html = 'https://localhost:44393';
+        let user_state = null; // хранилище токена
+
+        function loadTasks()
+        {
+            if (user_state != null)
+            {
+                let xhr = new XMLHttpRequest();
+                xhr.open("GET", base_html + "/api/userdata/gettasks");
+                xhr.setRequestHeader("Authorization", "Bearer " + user_state.access_token);
+                
+                xhr.onreadystatechange = function () {
+                    if (xhr.status == 200 && xhr.readyState == XMLHttpRequest.DONE)
+                    {
+                        let tasks = JSON.parse(xhr.responseText);
+
+                        document.getElementById('sendLink').innerHTML = '';
+                        document.getElementById('tasks').innerHTML = '';
+
+                        for (i = 0; i < tasks.length; ++i) {
+                            document.getElementById('tasks').innerHTML += '<span> Вариант ' + tasks[i]['TaskVariantNumber'] + ' — ' + tasks[i].TaskVariantDescription + ' <br> Текст задания - ' + tasks[i].TaskName + '<br> Ссылка на github = <a href="' + (tasks[i].TaskLink || '#') + '"> ссылка </a>' + '</span><hr>';
+                            document.getElementById('sendLink').innerHTML += '<option value = "' + tasks[i].VariantId + '"> ' + 'Вариант ' + tasks[i].TaskVariantNumber + ' : ' + tasks[i].TaskVariantDescription + '</option>'
+                        }
+                    }
+                    
+                };
+                xhr.send()
+            }
+        }
+
+        document.getElementById('submit_button').onclick = function()
+        {
+            // создать объект для формы
+            var formData = new FormData(document.forms.login);
+
+            // отослать
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", base_html + "/token");
+            xhr.onreadystatechange = function()
+            {
+                if (xhr.status == 200 && xhr.readyState == XMLHttpRequest.DONE)
+                {
+                    let res_json = JSON.parse(xhr.responseText);
+                    user_state = res_json;
+                    document.getElementById('info').innerHTML = 'UserName = ' + user_state.username;
+
+                    loadTasks();
+                }
+                else
+                {
+                    document.getElementById('info').innerHTML = 'Login Error = ' + xhr.responseText;
+                }
+            };
+            console.log(formData);
+            xhr.send(formData);
+        }
+
+
+
+        function sendLinkGithub() {
+
+            if (user_state != null) {
+                let e = document.getElementById("sendLink");
+                let val_id = e.options[e.selectedIndex].value;
+
+                let xhr = new XMLHttpRequest();
+                xhr.open("POST", base_html + "/api/userdata/sendlink" + '?Id=' + val_id + '&Link=' + document.getElementById('textLink').value);
+                xhr.setRequestHeader("Authorization", "Bearer " + user_state.access_token);
+
+                xhr.onreadystatechange = function () {
+                    if (xhr.status == 200 && xhr.readyState == XMLHttpRequest.DONE) {
+                        loadTasks()
+                    }
+                };
+                xhr.send()
+
+                //alert(xhr.responseText)
+
+            }
+            
+        }
+
+        document.getElementById('submitLink').onclick = sendLinkGithub;
+
+    </script>
+</body>
+</html>
+

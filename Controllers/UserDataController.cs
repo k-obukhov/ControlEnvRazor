@@ -15,7 +15,6 @@ namespace ControlEnvRazor.Controllers
     [Route("api/[controller]")]
     public class UserDataController : Controller
     {
-
         private UserManager<ApplicationUser> UserManager { get; set; }
         private ApplicationDbContext Context { get; set; }
 
@@ -25,43 +24,51 @@ namespace ControlEnvRazor.Controllers
             Context = context;
         }
 
-        [Authorize]
-        [HttpGet("/GetTasks")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        //[Authorize]
+        [Route("gettasks")]
         public async Task GetTasks()
         {
-            var curUser = await UserManager.GetUserAsync(User);
-            var variants = Context.UserVariants.Where(e => e.ApplicationUserId == curUser.Id);
-
-            var response = new List<object>();
-            foreach (var variant in variants)
+            var curUserId = User.Identity.Name; // userid
+            if (curUserId != null)
             {
-                response.Add(
-                    new
+                var variants = Context.UserVariants.Where(e => e.ApplicationUserId == curUserId);
+
+                var response = new List<object>();
+                if (variants != null)
+                {
+                    foreach (var variant in variants)
                     {
-                        TaskVariantId = variant.TaskVariantId,
-                        TaskVariantDescription = variant.TaskVariant.Description,
-                        TaskVariantNumber = variant.TaskVariant.NumberOfVariant,
+                        response.Add(
+                        new
+                        {
+                            VariantId = variant.Id,
 
-                        TaskId = variant.TaskVariant.UserTask.Id,
-                        TaskName = variant.TaskVariant.UserTask.TaskName,
-                        TaskDescription = variant.TaskVariant.UserTask.CommonDescription,
+                            TaskVariantId = variant.TaskVariantId,
+                            TaskVariantDescription = variant.TaskVariant.Description,
+                            TaskVariantNumber = variant.TaskVariant.NumberOfVariant,
 
-                        TaskLink = variant.GithubRepo
-                    });
+                            TaskId = variant.TaskVariant.UserTask.Id,
+                            TaskName = variant.TaskVariant.UserTask.TaskName,
+                            TaskDescription = variant.TaskVariant.UserTask.CommonDescription,
+
+                            TaskLink = variant.GithubRepo
+                        });
+                    }
+                }
+
+                Response.ContentType = "application/json";
+                await Response.WriteAsync(JsonConvert.SerializeObject(response.ToArray(), new JsonSerializerSettings { Formatting = Formatting.Indented }));
             }
-
-            Response.ContentType = "application/json";
-            await Response.WriteAsync(JsonConvert.SerializeObject(response.ToArray(), new JsonSerializerSettings { Formatting = Formatting.Indented }));
         }
 
-        [Authorize]
-        [HttpPost("/SendLink")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [Route("sendlink")]
         public async Task SendLink(int Id, string Link)
         {
-            var curUser = await UserManager.GetUserAsync(User);
-            var variant = await Context.UserVariants.FirstOrDefaultAsync(e => e.Id == Id && e.ApplicationUserId == curUser.Id);
+            var variant = await Context.UserVariants.FirstOrDefaultAsync(e => e.Id == Id && e.ApplicationUserId == User.Identity.Name);
 
-            if (variant == null || curUser == null)
+            if (variant == null )
             {
                 // Можно и ссылку на гитхаб проверять
                 Response.StatusCode = 400;

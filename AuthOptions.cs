@@ -11,7 +11,7 @@ namespace ControlEnvRazor
     {
         public const string ISSUER = "ControlEnvRazor"; // издатель токена
         public const string AUDIENCE = "http://localhost:45138"; // потребитель токена
-        const string KEY = "secretsecretsecretsecretsecretsecretsecret";   // ключ для шифрации
+        public const string KEY = "secretsecretsecretsecretsecretsecretsecret";   // ключ для шифрации
         public const int LIFETIME = 5; // время жизни токена 
         public static SymmetricSecurityKey GetSymmetricSecurityKey()
         {

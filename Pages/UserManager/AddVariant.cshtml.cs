@@ -44,8 +44,8 @@ namespace ControlEnvRazor.Pages.UserManager
 
             UserTasks = await (from elem in context.UserTasks where elem.ApplicationUserId == currentUser.Id select elem).ToListAsync();
             //this.UserId = UserId;
-
-            TaskVariants = await (from elem in context.TaskVariants where elem.UserTaskId == UserTasks.FirstOrDefault().Id select elem).ToListAsync();
+            if (UserTasks.FirstOrDefault() != null)
+                TaskVariants = await (from elem in context.TaskVariants where elem.UserTaskId == UserTasks.FirstOrDefault().Id  select elem).ToListAsync();
 
             return Page();
         }
